@@ -1,0 +1,20 @@
+{
+  "name": "beerless-beerpong-api",
+  "version": "1.0.0",
+  "description": "The API side of the Beer-less Beer-pong project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Horacio Gonzalez <horacio.gonzalez@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5",
+    "serialport": "^6.1.1"
+  }
+}
