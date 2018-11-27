@@ -7,13 +7,14 @@ class Driver {
     constructor(opts) {
 
         this.opts = opts || {};
+        this.opts.callbacks = this.opts.callbacks || {};
 
         this.result = [];
         this.receivedData = '';
         
         if (!opts.mock) {
             let serialFile;
-            opts.usbPort.forEach(element => {
+            opts.usbPort.forEach(() => {
                 if (fs.existsSync('/dev/ttyACM0')) {
                     serialFile = '/dev/ttyACM0';
                 }
@@ -53,38 +54,36 @@ class Driver {
         this.receivedData += data.toString();
 
         const splitedData = this.receivedData.split(/\n/).reverse();
-        const structData = splitedData.filter((element) => {
-            return element.length>4;
-        }).map((element) => {
-            try {
-                return JSON.parse(element);
-            } catch(e) {
-                return [];
-            }
+        const rpc = splitedData
+        .filter((element) => {
+            return /;$/.test(element);
         });
-
-        if (structData.length) {
-            this.result = structData[0];
-            this.receivedData = '';
-            if (this.opts.callback) {
-                this.opts.callback(this.result);
+        if (rpc.length) {
+            try {
+                return eval(`this.opts.callbacks.${rpc[0]}`);
+            } catch(e) {
+                console.log(`Could not eval ${rpc[0]}`, e);
             }
         }
     }
 
     mock() {
         const mocks = [
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 45]\n",
-            "[15, 25, 55, 85, 95, 4]\n",
-            "[15, 25, 55, 85, 95, 4]\n",
-            "[15, 25, 55, 85, 9, 4]\n",
-            "[15, 25, 5, 85, 9, 4]\n",
-            "[15, 2, 5, 85, 9, 4]\n"
+            "sensor(15, 25, 55, ",
+            "85, 95, 45);\n",
+            "sensor(15, 25, 55, 85, 95, 45);\n",
+            "sensor(15, 25, 55, 85, 95, 45",
+            ");\n",
+            "sensor(15, 25, 55, 85, 95, 45);\n",
+            "senso",
+            "r(15, 25, 55, 85, 95, 45);\n",
+            "sensor(15, 25, 55, 85, 95, 45);\n",
+            "sensor(1",
+            "5, 25, 55, 85, 95, 4);\n",
+            "sensor(15, 25, 55, 85, 95, 4);\n",
+            "sensor(15, 25, 55, 85, 9, 4);\n",
+            "sensor(15, 25, 5, 85, 9, 4);\n",
+            "sensor(15, 2, 5, 85, 9, 4);\n"
         ]
         let i = 0;
         var interval = setInterval(() => {

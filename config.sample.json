@@ -1,0 +1,6 @@
+{
+    "usbPort": "/dev/ttyACM0",
+    "baudRate": 115200,
+    "public_html": "../rpi-front/dist",
+    "mock": true
+}

@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser');
-const opts = require('../config.json');
+const opts = require('./config.json');
 
 const Game = require('./game');
 const Driver = require('./driver');
@@ -15,7 +15,14 @@ const driver = new Driver({
     parity: 'none', 
     stopBits: 1, 
     flowControl: false,
-    mock: opts.mock
+    mock: opts.mock,
+    callbacks: {
+        sensor: function() {
+            if (game && game.currentGame && game.playing) {
+                game.currentGame.status = Array.prototype.slice.call(arguments);
+            }
+        }
+    }
 })
 
 
